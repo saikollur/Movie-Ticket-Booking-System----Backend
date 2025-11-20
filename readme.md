@@ -1,143 +1,177 @@
-Movie Booking System Backend
+🎬 Movie Booking System – Backend
 
-A robust, production-ready REST API for a movie ticket booking system, built with Django and Django REST Framework. This project features JWT authentication, atomic transactions for data integrity, and automated Swagger documentation.
+A production-ready REST API for a movie ticket booking system, built using Django and Django REST Framework (DRF).
+This backend features secure JWT authentication, concurrency-safe seat booking, and interactive Swagger documentation.
 
 🚀 Features
 
-JWT Authentication: Secure, stateless authentication using simplejwt.
+🔐 JWT Authentication with simplejwt for secure, stateless login.
 
-Concurrency Handling: Uses transaction.atomic and database row locking (select_for_update) to prevent double-booking of seats.
+🧵 Concurrency Handling using:
 
-Soft Cancellations: Bookings are marked as 'CANCELLED' rather than deleted, preserving data history.
+transaction.atomic()
 
-Swagger/OpenAPI Documentation: Interactive API explorer available at /swagger/.
+select_for_update() row locking
+Prevents double-booking of seats.
 
-Unit Tests: Comprehensive testing for booking rules and edge cases.
+♻️ Soft Cancellations
+Bookings are marked as CANCELLED instead of being deleted.
+
+📘 Swagger / OpenAPI Docs
+Available at: /swagger/
+
+🧪 Unit Tests
+Tests written for booking rules, concurrency, and edge cases.
 
 🛠 Tech Stack
 
-Python (3.10+)
+🐍 Python 3.10+
 
-Django (5.0+)
+🏗 Django 5.0+
 
-Django REST Framework (3.14+)
+🔧 Django REST Framework 3.14+
 
-Database: SQLite (Dev) / PostgreSQL (Production ready)
+🗄 SQLite (Dev) / PostgreSQL (Production-ready)
 
-Documentation: drf-yasg (Swagger UI)
+📄 drf-yasg for API documentation
 
-⚙️ Setup Instructions
-
-Follow these steps to set up the project locally.
-
-1. Clone and Install
-
-# Clone the repository
-
+⚙️ Installation & Setup
+1. Clone the Repository
 git clone <repository_url>
 cd movie_booking_backend
 
-# Create a virtual environment
-
+2. Create Virtual Environment
 python -m venv venv
 
-# Activate the virtual environment
 
-# On Windows:
+Activate Environment
+
+Windows:
 
 venv\Scripts\activate
 
-# On macOS/Linux:
+
+macOS/Linux:
 
 source venv/bin/activate
 
-# Install dependencies
-
+3. Install Dependencies
 pip install -r requirements.txt
 
-2. Database Setup
+🗄 Database Setup
 
-Apply the database migrations to create the necessary tables.
+Apply migrations:
 
 python manage.py makemigrations
 python manage.py migrate
 
-3. Create an Admin User
-
-You need a superuser to access the Django Admin panel and add Movies/Shows.
-
+🔑 Create Admin User
 python manage.py createsuperuser
 
-Follow the prompts to set a username and password.
 
-4. Run the Server
+Follow the prompts to set username & password.
 
+▶️ Run the Development Server
 python manage.py runserver
 
-The server will start at http://127.0.0.1:8000/.
 
-5. Run Tests (Bonus)
+Your API is now live at:
+👉 http://127.0.0.1:8000/
 
-To verify the booking logic and concurrency rules:
-
+🧪 Run Unit Tests
 python manage.py test bookings
 
-📖 API Documentation & Usage
+📖 API Documentation
 
-The easiest way to test the API is using the integrated Swagger UI.
+🚪 Visit Swagger UI:
+👉 http://127.0.0.1:8000/swagger/
 
-Open the Docs: Navigate to http://127.0.0.1:8000/swagger/.
+Authorize
 
-Authorize:
+Login using /api/login/
 
-Use the /api/login/ endpoint to get an access token.
+Copy the access token
 
-Click the Authorize button at the top of the Swagger page.
+Click Authorize in Swagger
 
-Enter: Bearer <your_access_token> (Note the space after "Bearer").
+Enter:
 
-🧪 Testing Workflow (Manual)
+Bearer <your_access_token>
 
-Register:
+🧪 Manual Testing Guide
+1. Register
 
 POST /api/signup/
 
-Body: {"username": "john", "password": "securepass123", "email": "john@example.com"}
+{
+  "username": "john",
+  "password": "securepass123",
+  "email": "john@example.com"
+}
 
-Login:
+2. Login
 
 POST /api/login/
 
-Body: {"username": "john", "password": "securepass123"}
+{
+  "username": "john",
+  "password": "securepass123"
+}
 
-Response: Copy the access token.
 
-Add Data (Admin Only):
+Copy the access token from the response.
 
-Go to http://127.0.0.1:8000/admin/
+3. Add Data (Admin Only)
 
-Create a Movie (e.g., "Inception").
+Visit Django admin:
+👉 http://127.0.0.1:8000/admin/
 
-Create a Show (e.g., Inception, Screen 1, Today, 50 Seats). Note the id of the show (e.g., 1).
+Add:
 
-Book a Seat:
+Movie (example: Inception)
+
+Show (example: Screen 1, Today, 50 seats)
+
+4. Book a Seat
 
 POST /api/shows/1/book/
 
-Header: Authorization: Bearer <your_token>
+Header:
 
-Body: {"seat_number": 5}
+Authorization: Bearer <your_token>
+
+
+Body:
+
+{
+  "seat_number": 5
+}
 
 🧠 Design Decisions
+🧵 Concurrency & Double Booking Prevention
 
-Concurrency & Double Booking
+To handle simultaneous bookings:
 
-To satisfy the requirement of preventing double bookings, I implemented pessimistic locking using select_for_update() within an atomic transaction.
+Wrapped booking process inside transaction.atomic()
 
-Scenario: User A and User B try to book Seat 5 at the exact same millisecond.
+Used select_for_update() to lock the Show row
 
-Solution: The database locks the Show row when User A starts the booking process. User B's request waits until User A's transaction commits or rolls back. If User A succeeds, User B's check will fail gracefully with "Seat already booked".
+Example Scenario
+User A and User B try to book Seat 5 at the exact same moment.
 
-Database Indexes
+Outcome:
+User A’s request locks the seat first.
+User B’s request waits → detects seat already booked → fails gracefully.
 
-An index was added to the Booking model on ['show', 'seat_number', 'status'] to optimize lookups when checking seat availability.
+⚡ Database Optimization
+
+A composite index was added on the Booking model:
+
+['show', 'seat_number', 'status']
+
+
+This makes seat availability checks extremely fast.
+
+🤝 Contributing
+
+Pull requests and bug reports are welcome!
