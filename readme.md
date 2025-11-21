@@ -216,8 +216,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 <div align="center">
 
-**Made with ❤️ using Django**
-
 ⭐ Star if you find this helpful!
 
 </div>
