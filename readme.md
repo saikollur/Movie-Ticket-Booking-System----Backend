@@ -1,143 +1,326 @@
-Movie Booking System Backend
+# 🎬 Movie Booking System – Backend
 
-A robust, production-ready REST API for a movie ticket booking system, built with Django and Django REST Framework. This project features JWT authentication, atomic transactions for data integrity, and automated Swagger documentation.
+<div align="center">
 
-🚀 Features
+![Django](https://img.shields.io/badge/Django-5.0+-092E20?style=for-the-badge&logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/DRF-3.14+-ff1709?style=for-the-badge&logo=django&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-JWT Authentication: Secure, stateless authentication using simplejwt.
+A production-ready REST API for a movie ticket booking system, built with Django and Django REST Framework.
 
-Concurrency Handling: Uses transaction.atomic and database row locking (select_for_update) to prevent double-booking of seats.
+**Secure • Concurrent • Interactive**
 
-Soft Cancellations: Bookings are marked as 'CANCELLED' rather than deleted, preserving data history.
+[Features](#-features) • [Installation](#%EF%B8%8F-installation--setup) • [API Docs](#-api-documentation) • [Testing](#-testing)
 
-Swagger/OpenAPI Documentation: Interactive API explorer available at /swagger/.
+</div>
 
-Unit Tests: Comprehensive testing for booking rules and edge cases.
+---
 
-🛠 Tech Stack
+## ✨ Features
 
-Python (3.10+)
+- 🔐 **JWT Authentication** – Secure, stateless authentication using `simplejwt`
+- 🧵 **Concurrency Safe** – Prevents double-booking with database row locking
+- ♻️ **Soft Deletions** – Bookings are marked as `CANCELLED` instead of deleted
+- 📘 **Interactive API Docs** – Swagger UI with live testing capabilities
+- 🧪 **Comprehensive Tests** – Unit tests for booking logic, concurrency, and edge cases
+- 🚀 **Production Ready** – Optimized queries with composite indexes
 
-Django (5.0+)
+---
 
-Django REST Framework (3.14+)
+## 🛠 Tech Stack
 
-Database: SQLite (Dev) / PostgreSQL (Production ready)
+| Technology                        | Purpose                                              |
+| --------------------------------- | ---------------------------------------------------- |
+| **Python 3.10+**                  | Core language                                        |
+| **Django 5.0+**                   | Web framework                                        |
+| **Django REST Framework 3.14+**   | RESTful API development                              |
+| **SQLite / PostgreSQL**           | Database (SQLite for dev, PostgreSQL for production) |
+| **drf-yasg**                      | Swagger/OpenAPI documentation                        |
+| **djangorestframework-simplejwt** | JWT authentication                                   |
 
-Documentation: drf-yasg (Swagger UI)
+---
 
-⚙️ Setup Instructions
+## ⚙️ Installation & Setup
 
-Follow these steps to set up the project locally.
+### 1️⃣ Clone the Repository
 
-1. Clone and Install
-
-# Clone the repository
-
+```bash
 git clone <repository_url>
 cd movie_booking_backend
+```
 
-# Create a virtual environment
+### 2️⃣ Create & Activate Virtual Environment
 
+```bash
+# Create virtual environment
 python -m venv venv
 
-# Activate the virtual environment
-
-# On Windows:
-
+# Activate (Windows)
 venv\Scripts\activate
 
-# On macOS/Linux:
-
+# Activate (macOS/Linux)
 source venv/bin/activate
+```
 
-# Install dependencies
+### 3️⃣ Install Dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
-2. Database Setup
+### 4️⃣ Database Setup
 
-Apply the database migrations to create the necessary tables.
-
+```bash
+# Create migrations
 python manage.py makemigrations
+
+# Apply migrations
 python manage.py migrate
+```
 
-3. Create an Admin User
+### 5️⃣ Create Admin User
 
-You need a superuser to access the Django Admin panel and add Movies/Shows.
-
+```bash
 python manage.py createsuperuser
+```
 
-Follow the prompts to set a username and password.
+Follow the prompts to set your admin credentials.
 
-4. Run the Server
+### 6️⃣ Run Development Server
 
+```bash
 python manage.py runserver
+```
 
-The server will start at http://127.0.0.1:8000/.
+🎉 **Your API is now live at:** `http://127.0.0.1:8000/`
 
-5. Run Tests (Bonus)
+---
 
-To verify the booking logic and concurrency rules:
+## 📖 API Documentation
 
+### 🌐 Access Swagger UI
+
+Visit: **[http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/swagger/)**
+
+### 🔓 Authorization Setup
+
+1. Login using `/api/login/` endpoint
+2. Copy the `access` token from response
+3. Click **Authorize** button in Swagger UI
+4. Enter: `Bearer <your_access_token>`
+5. Click **Authorize** to confirm
+
+---
+
+## 🧪 Testing
+
+### Run Unit Tests
+
+```bash
 python manage.py test bookings
+```
 
-📖 API Documentation & Usage
+### Manual Testing Flow
 
-The easiest way to test the API is using the integrated Swagger UI.
+#### 1️⃣ **Register a New User**
 
-Open the Docs: Navigate to http://127.0.0.1:8000/swagger/.
-
-Authorize:
-
-Use the /api/login/ endpoint to get an access token.
-
-Click the Authorize button at the top of the Swagger page.
-
-Enter: Bearer <your_access_token> (Note the space after "Bearer").
-
-🧪 Testing Workflow (Manual)
-
-Register:
-
+```http
 POST /api/signup/
+Content-Type: application/json
 
-Body: {"username": "john", "password": "securepass123", "email": "john@example.com"}
+{
+  "username": "john",
+  "password": "securepass123",
+  "email": "john@example.com"
+}
+```
 
-Login:
+#### 2️⃣ **Login**
 
+```http
 POST /api/login/
+Content-Type: application/json
 
-Body: {"username": "john", "password": "securepass123"}
+{
+  "username": "john",
+  "password": "securepass123"
+}
+```
 
-Response: Copy the access token.
+**Response:**
 
-Add Data (Admin Only):
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
 
-Go to http://127.0.0.1:8000/admin/
+#### 3️⃣ **Add Test Data (Admin Only)**
 
-Create a Movie (e.g., "Inception").
+Visit Django Admin: **[http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)**
 
-Create a Show (e.g., Inception, Screen 1, Today, 50 Seats). Note the id of the show (e.g., 1).
+Add:
 
-Book a Seat:
+- **Movie** (e.g., "Inception")
+- **Show** (e.g., Screen 1, Today, 50 seats)
 
+#### 4️⃣ **Book a Seat**
+
+```http
 POST /api/shows/1/book/
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
 
-Header: Authorization: Bearer <your_token>
+{
+  "seat_number": 5
+}
+```
 
-Body: {"seat_number": 5}
+**Success Response:**
 
-🧠 Design Decisions
+```json
+{
+  "id": 1,
+  "user": "john",
+  "show": 1,
+  "seat_number": 5,
+  "status": "CONFIRMED",
+  "booking_time": "2025-01-15T10:30:00Z"
+}
+```
 
-Concurrency & Double Booking
+---
 
-To satisfy the requirement of preventing double bookings, I implemented pessimistic locking using select_for_update() within an atomic transaction.
+## 🧠 Design Decisions
 
-Scenario: User A and User B try to book Seat 5 at the exact same millisecond.
+### 🧵 Concurrency & Double Booking Prevention
 
-Solution: The database locks the Show row when User A starts the booking process. User B's request waits until User A's transaction commits or rolls back. If User A succeeds, User B's check will fail gracefully with "Seat already booked".
+**Problem:** Multiple users booking the same seat simultaneously.
 
-Database Indexes
+**Solution:**
 
-An index was added to the Booking model on ['show', 'seat_number', 'status'] to optimize lookups when checking seat availability.
+- Wrapped booking logic in `transaction.atomic()`
+- Used `select_for_update()` for row-level locking
+- Prevents race conditions at database level
+
+**Example Scenario:**
+
+| Timeline | User A                  | User B                |
+| -------- | ----------------------- | --------------------- |
+| T0       | Requests Seat 5         | Requests Seat 5       |
+| T1       | Locks Show row          | Waits for lock        |
+| T2       | Books seat              | Still waiting         |
+| T3       | Commits & releases lock | Gets lock             |
+| T4       | ✅ Success              | ❌ Seat already taken |
+
+### ⚡ Database Optimization
+
+Added composite index on `Booking` model:
+
+```python
+class Meta:
+    indexes = [
+        models.Index(fields=['show', 'seat_number', 'status'])
+    ]
+```
+
+**Benefits:**
+
+- Lightning-fast seat availability checks
+- Optimized filtering by show and status
+- Improved query performance for large datasets
+
+### ♻️ Soft Deletions
+
+Bookings are never permanently deleted:
+
+- Cancelled bookings are marked as `status='CANCELLED'`
+- Enables audit trails and analytics
+- Allows potential restoration if needed
+
+---
+
+## 📁 Project Structure
+
+```
+movie_booking_backend/
+│
+├── bookings/              # Main app
+│   ├── models.py          # Database models
+│   ├── serializers.py     # DRF serializers
+│   ├── views.py           # API views
+│   ├── urls.py            # URL routing
+│   └── tests.py           # Unit tests
+│
+├── movie_booking/         # Project settings
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── manage.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🔒 Security Features
+
+- ✅ JWT-based authentication
+- ✅ Password hashing with Django's default PBKDF2
+- ✅ CSRF protection enabled
+- ✅ SQL injection prevention via ORM
+- ✅ Rate limiting (recommended for production)
+
+---
+
+## 🚀 Deployment Checklist
+
+Before deploying to production:
+
+- [ ] Set `DEBUG = False` in settings
+- [ ] Configure proper `ALLOWED_HOSTS`
+- [ ] Switch to PostgreSQL database
+- [ ] Set strong `SECRET_KEY`
+- [ ] Configure CORS headers
+- [ ] Add rate limiting (django-ratelimit)
+- [ ] Set up logging and monitoring
+- [ ] Use environment variables for secrets
+- [ ] Configure HTTPS/SSL
+- [ ] Set up database backups
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📧 Contact
+
+Have questions or suggestions? Feel free to open an issue or reach out!
+
+---
+
+<div align="center">
+
+**Made with ❤️ using Django**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
