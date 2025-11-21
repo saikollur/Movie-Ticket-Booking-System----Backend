@@ -1,178 +1,320 @@
-🎬 Movie Booking System – Backend
+# 🎬 Movie Booking System – Backend
 
-A production-ready REST API for a movie ticket booking system, built using Django and Django REST Framework (DRF).
-This backend features secure JWT authentication, concurrency-safe seat booking, and interactive Swagger documentation.
+<div align="center">
 
-🚀 Features
+![Django](https://img.shields.io/badge/Django-5.0+-092E20?style=for-the-badge&logo=django&logoColor=white)
+![DRF](https://img.shields.io/badge/DRF-3.14+-ff1709?style=for-the-badge&logo=django&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-🔐 JWT Authentication with simplejwt for secure, stateless login.
+A production-ready REST API for a movie ticket booking system, built with Django and Django REST Framework.
 
-🧵 Concurrency Handling using:
+**Secure • Concurrent • Interactive**
 
-transaction.atomic()
+[Features](#-features) • [Installation](#%EF%B8%8F-installation--setup) • [API Docs](#-api-documentation) • [Testing](#-testing)
 
-select_for_update() row locking
-Prevents double-booking of seats.
+</div>
 
-♻️ Soft Cancellations
-Bookings are marked as CANCELLED instead of being deleted.
+---
 
-📘 Swagger / OpenAPI Docs
-Available at: /swagger/
+## ✨ Features
 
-🧪 Unit Tests
-Tests written for booking rules, concurrency, and edge cases.
+- 🔐 **JWT Authentication** – Secure, stateless authentication using `simplejwt`
+- 🧵 **Concurrency Safe** – Prevents double-booking with database row locking
+- ♻️ **Soft Deletions** – Bookings are marked as `CANCELLED` instead of deleted
+- 📘 **Interactive API Docs** – Swagger UI with live testing capabilities
+- 🧪 **Comprehensive Tests** – Unit tests for booking logic, concurrency, and edge cases
+- 🚀 **Production Ready** – Optimized queries with composite indexes
 
-🛠 Tech Stack
+---
 
-🐍 Python 3.10+
+## 🛠 Tech Stack
 
-🏗 Django 5.0+
+| Technology | Purpose |
+|------------|---------|
+| **Python 3.10+** | Core language |
+| **Django 5.0+** | Web framework |
+| **Django REST Framework 3.14+** | RESTful API development |
+| **SQLite / PostgreSQL** | Database (SQLite for dev, PostgreSQL for production) |
+| **drf-yasg** | Swagger/OpenAPI documentation |
+| **djangorestframework-simplejwt** | JWT authentication |
 
-🔧 Django REST Framework 3.14+
+---
 
-🗄 SQLite (Dev) / PostgreSQL (Production-ready)
+## ⚙️ Installation & Setup
 
-📄 drf-yasg for API documentation
+### 1️⃣ Clone the Repository
 
-⚙️ Installation & Setup
-1. Clone the Repository
+```bash
 git clone <repository_url>
 cd movie_booking_backend
+```
 
-2. Create Virtual Environment
+### 2️⃣ Create & Activate Virtual Environment
+
+```bash
+# Create virtual environment
 python -m venv venv
 
-
-Activate Environment
-
-Windows:
-
+# Activate (Windows)
 venv\Scripts\activate
 
-
-macOS/Linux:
-
+# Activate (macOS/Linux)
 source venv/bin/activate
+```
 
-3. Install Dependencies
+### 3️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-🗄 Database Setup
+### 4️⃣ Database Setup
 
-Apply migrations:
-
+```bash
+# Create migrations
 python manage.py makemigrations
+
+# Apply migrations
 python manage.py migrate
+```
 
-🔑 Create Admin User
+### 5️⃣ Create Admin User
+
+```bash
 python manage.py createsuperuser
+```
 
+Follow the prompts to set your admin credentials.
 
-Follow the prompts to set username & password.
+### 6️⃣ Run Development Server
 
-▶️ Run the Development Server
-
+```bash
 python manage.py runserver
+```
 
+🎉 **Your API is now live at:** `http://127.0.0.1:8000/`
 
-Your API is now live at:
-👉 http://127.0.0.1:8000/
+---
 
-🧪 Run Unit Tests
+## 📖 API Documentation
+
+### 🌐 Access Swagger UI
+
+Visit: **[http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/swagger/)**
+
+### 🔓 Authorization Setup
+
+1. Login using `/api/login/` endpoint
+2. Copy the `access` token from response
+3. Click **Authorize** button in Swagger UI
+4. Enter: `Bearer <your_access_token>`
+5. Click **Authorize** to confirm
+
+---
+
+## 🧪 Testing
+
+### Run Unit Tests
+
+```bash
 python manage.py test bookings
+```
 
-📖 API Documentation
+### Manual Testing Flow
 
-🚪 Visit Swagger UI:
-👉 http://127.0.0.1:8000/swagger/
+#### 1️⃣ **Register a New User**
 
-Authorize
-
-Login using /api/login/
-
-Copy the access token
-
-Click Authorize in Swagger
-
-Enter:
-
-Bearer <your_access_token>
-
-🧪 Manual Testing Guide
-1. Register
-
+```http
 POST /api/signup/
+Content-Type: application/json
 
 {
   "username": "john",
   "password": "securepass123",
   "email": "john@example.com"
 }
+```
 
-2. Login
+#### 2️⃣ **Login**
 
+```http
 POST /api/login/
+Content-Type: application/json
 
 {
   "username": "john",
   "password": "securepass123"
 }
+```
 
+**Response:**
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
 
-Copy the access token from the response.
+#### 3️⃣ **Add Test Data (Admin Only)**
 
-3. Add Data (Admin Only)
-
-Visit Django admin:
-👉 http://127.0.0.1:8000/admin/
+Visit Django Admin: **[http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)**
 
 Add:
+- **Movie** (e.g., "Inception")
+- **Show** (e.g., Screen 1, Today, 50 seats)
 
-Movie (example: Inception)
+#### 4️⃣ **Book a Seat**
 
-Show (example: Screen 1, Today, 50 seats)
-
-4. Book a Seat
-
+```http
 POST /api/shows/1/book/
-
-Header:
-
-Authorization: Bearer <your_token>
-
-
-Body:
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
 
 {
   "seat_number": 5
 }
+```
 
-🧠 Design Decisions
-🧵 Concurrency & Double Booking Prevention
+**Success Response:**
+```json
+{
+  "id": 1,
+  "user": "john",
+  "show": 1,
+  "seat_number": 5,
+  "status": "CONFIRMED",
+  "booking_time": "2025-01-15T10:30:00Z"
+}
+```
 
-To handle simultaneous bookings:
+---
 
-Wrapped booking process inside transaction.atomic()
+## 🧠 Design Decisions
 
-Used select_for_update() to lock the Show row
+### 🧵 Concurrency & Double Booking Prevention
 
-Example Scenario
-User A and User B try to book Seat 5 at the exact same moment.
+**Problem:** Multiple users booking the same seat simultaneously.
 
-Outcome:
-User A’s request locks the seat first.
-User B’s request waits → detects seat already booked → fails gracefully.
+**Solution:**
+- Wrapped booking logic in `transaction.atomic()`
+- Used `select_for_update()` for row-level locking
+- Prevents race conditions at database level
 
-⚡ Database Optimization
+**Example Scenario:**
 
-A composite index was added on the Booking model:
+| Timeline | User A | User B |
+|----------|--------|--------|
+| T0 | Requests Seat 5 | Requests Seat 5 |
+| T1 | Locks Show row | Waits for lock |
+| T2 | Books seat | Still waiting |
+| T3 | Commits & releases lock | Gets lock |
+| T4 | ✅ Success | ❌ Seat already taken |
 
-['show', 'seat_number', 'status']
+### ⚡ Database Optimization
 
+Added composite index on `Booking` model:
 
-This makes seat availability checks extremely fast.
+```python
+class Meta:
+    indexes = [
+        models.Index(fields=['show', 'seat_number', 'status'])
+    ]
+```
 
-🤝 Contributing
+**Benefits:**
+- Lightning-fast seat availability checks
+- Optimized filtering by show and status
+- Improved query performance for large datasets
 
-Pull requests and bug reports are welcome!
+### ♻️ Soft Deletions
+
+Bookings are never permanently deleted:
+- Cancelled bookings are marked as `status='CANCELLED'`
+- Enables audit trails and analytics
+- Allows potential restoration if needed
+
+---
+
+## 📁 Project Structure
+
+```
+movie_booking_backend/
+│
+├── bookings/              # Main app
+│   ├── models.py          # Database models
+│   ├── serializers.py     # DRF serializers
+│   ├── views.py           # API views
+│   ├── urls.py            # URL routing
+│   └── tests.py           # Unit tests
+│
+├── movie_booking/         # Project settings
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── manage.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## 🔒 Security Features
+
+- ✅ JWT-based authentication
+- ✅ Password hashing with Django's default PBKDF2
+- ✅ CSRF protection enabled
+- ✅ SQL injection prevention via ORM
+- ✅ Rate limiting (recommended for production)
+
+---
+
+## 🚀 Deployment Checklist
+
+Before deploying to production:
+
+- [ ] Set `DEBUG = False` in settings
+- [ ] Configure proper `ALLOWED_HOSTS`
+- [ ] Switch to PostgreSQL database
+- [ ] Set strong `SECRET_KEY`
+- [ ] Configure CORS headers
+- [ ] Add rate limiting (django-ratelimit)
+- [ ] Set up logging and monitoring
+- [ ] Use environment variables for secrets
+- [ ] Configure HTTPS/SSL
+- [ ] Set up database backups
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📧 Contact
+
+Have questions or suggestions? Feel free to open an issue or reach out!
+
+---
+
+<div align="center">
+
+**Made with ❤️ using Django**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
