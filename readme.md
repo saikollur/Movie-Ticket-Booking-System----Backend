@@ -72,6 +72,7 @@ python manage.py createsuperuser
 Follow the prompts to set username & password.
 
 ▶️ Run the Development Server
+
 python manage.py runserver
 
 
