@@ -7,11 +7,9 @@
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-A production-ready REST API for a movie ticket booking system, built with Django and Django REST Framework.
+A production-ready REST API for movie ticket booking with JWT authentication and concurrency-safe seat reservations.
 
-**Secure • Concurrent • Interactive**
-
-[Features](#-features) • [Installation](#%EF%B8%8F-installation--setup) • [API Docs](#-api-documentation) • [Testing](#-testing)
+**[Features](#-features)** • **[Installation](#%EF%B8%8F-installation)** • **[API Docs](#-api-documentation)** • **[Testing](#-testing)**
 
 </div>
 
@@ -21,159 +19,105 @@ A production-ready REST API for a movie ticket booking system, built with Django
 
 - 🔐 **JWT Authentication** – Secure, stateless authentication using `simplejwt`
 - 🧵 **Concurrency Safe** – Prevents double-booking with database row locking
-- ♻️ **Soft Deletions** – Bookings are marked as `CANCELLED` instead of deleted
-- 📘 **Interactive API Docs** – Swagger UI with live testing capabilities
-- 🧪 **Comprehensive Tests** – Unit tests for booking logic, concurrency, and edge cases
-- 🚀 **Production Ready** – Optimized queries with composite indexes
+- ♻️ **Soft Deletions** – Bookings marked as `CANCELLED` for audit trails
+- 📘 **Interactive Swagger UI** – Live API testing at `/swagger/`
+- 🧪 **Unit Tests** – Comprehensive test coverage for edge cases
+- ⚡ **Optimized Queries** – Composite indexes for fast lookups
 
 ---
 
 ## 🛠 Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Python 3.10+** | Core language |
-| **Django 5.0+** | Web framework |
-| **Django REST Framework 3.14+** | RESTful API development |
-| **SQLite / PostgreSQL** | Database (SQLite for dev, PostgreSQL for production) |
-| **drf-yasg** | Swagger/OpenAPI documentation |
-| **djangorestframework-simplejwt** | JWT authentication |
+**Python 3.10+** • **Django 5.0+** • **Django REST Framework 3.14+** • **SQLite/PostgreSQL** • **drf-yasg** • **simplejwt**
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Installation
 
-### 1️⃣ Clone the Repository
+### Prerequisites
+- Python 3.10+
+- pip & virtualenv
+
+### Quick Setup
 
 ```bash
+# Clone repository
 git clone <repository_url>
 cd movie_booking_backend
-```
 
-### 2️⃣ Create & Activate Virtual Environment
-
-```bash
-# Create virtual environment
+# Setup environment
 python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Activate (Windows)
-venv\Scripts\activate
-
-# Activate (macOS/Linux)
-source venv/bin/activate
-```
-
-### 3️⃣ Install Dependencies
-
-```bash
+# Install & migrate
 pip install -r requirements.txt
-```
-
-### 4️⃣ Database Setup
-
-```bash
-# Create migrations
-python manage.py makemigrations
-
-# Apply migrations
 python manage.py migrate
-```
-
-### 5️⃣ Create Admin User
-
-```bash
 python manage.py createsuperuser
-```
 
-Follow the prompts to set your admin credentials.
+# (Optional) Seed database with sample data
+python seed_script.py
 
-### 6️⃣ Run Development Server
-
-```bash
+# Run server
 python manage.py runserver
 ```
 
-🎉 **Your API is now live at:** `http://127.0.0.1:8000/`
+> **Note:** The seed script creates sample movies, shows, and a test user (`seed_user` / `seedpass`)
+
+🎉 **API running at:** `http://127.0.0.1:8000/`  
+📘 **Swagger UI:** `http://127.0.0.1:8000/swagger/`
 
 ---
 
 ## 📖 API Documentation
 
-### 🌐 Access Swagger UI
+### Main Endpoints
 
-Visit: **[http://127.0.0.1:8000/swagger/](http://127.0.0.1:8000/swagger/)**
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/signup/` | Register new user | ❌ |
+| POST | `/api/login/` | Get JWT token | ❌ |
+| GET | `/api/shows/` | List all shows | ✅ |
+| POST | `/api/shows/{id}/book/` | Book a seat | ✅ |
+| GET | `/api/bookings/` | View bookings | ✅ |
+| DELETE | `/api/bookings/{id}/cancel/` | Cancel booking | ✅ |
 
-### 🔓 Authorization Setup
-
-1. Login using `/api/login/` endpoint
-2. Copy the `access` token from response
-3. Click **Authorize** button in Swagger UI
-4. Enter: `Bearer <your_access_token>`
-5. Click **Authorize** to confirm
+### Authentication Flow
+1. Login via `/api/login/` → get `access` token
+2. In Swagger: Click **Authorize** → Enter `Bearer <token>`
+3. Make authenticated requests
 
 ---
 
 ## 🧪 Testing
 
-### Run Unit Tests
-
+### Run Tests
 ```bash
 python manage.py test bookings
 ```
 
-### Manual Testing Flow
+### Quick Manual Test
 
-#### 1️⃣ **Register a New User**
-
-```http
+**1. Register & Login**
+```bash
+# Register
 POST /api/signup/
-Content-Type: application/json
+{"username": "john", "password": "pass123", "email": "john@example.com"}
 
-{
-  "username": "john",
-  "password": "securepass123",
-  "email": "john@example.com"
-}
-```
-
-#### 2️⃣ **Login**
-
-```http
+# Login
 POST /api/login/
-Content-Type: application/json
-
-{
-  "username": "john",
-  "password": "securepass123"
-}
+{"username": "john", "password": "pass123"}
 ```
 
-**Response:**
-```json
-{
-  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
-}
-```
+**2. Add Test Data**  
+Go to `http://127.0.0.1:8000/admin/` and create:
+- Movie: "Inception"
+- Show: Screen 1, Today, 50 seats
 
-#### 3️⃣ **Add Test Data (Admin Only)**
-
-Visit Django Admin: **[http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)**
-
-Add:
-- **Movie** (e.g., "Inception")
-- **Show** (e.g., Screen 1, Today, 50 seats)
-
-#### 4️⃣ **Book a Seat**
-
-```http
+**3. Book Seat**
+```bash
 POST /api/shows/1/book/
-Authorization: Bearer <your_access_token>
-Content-Type: application/json
-
-{
-  "seat_number": 5
-}
+Authorization: Bearer <your_token>
+{"seat_number": 5}
 ```
 
 **Success Response:**
@@ -192,29 +136,23 @@ Content-Type: application/json
 
 ## 🧠 Design Decisions
 
-### 🧵 Concurrency & Double Booking Prevention
+### 🧵 Concurrency Control
 
-**Problem:** Multiple users booking the same seat simultaneously.
+**Challenge:** Prevent double-booking when multiple users book simultaneously.
 
-**Solution:**
-- Wrapped booking logic in `transaction.atomic()`
-- Used `select_for_update()` for row-level locking
-- Prevents race conditions at database level
-
-**Example Scenario:**
+**Solution:** Row-level locking with `transaction.atomic()` + `select_for_update()`
 
 | Timeline | User A | User B |
 |----------|--------|--------|
 | T0 | Requests Seat 5 | Requests Seat 5 |
-| T1 | Locks Show row | Waits for lock |
+| T1 | Locks Show record | Waits for lock |
 | T2 | Books seat | Still waiting |
-| T3 | Commits & releases lock | Gets lock |
-| T4 | ✅ Success | ❌ Seat already taken |
+| T3 | Commits & unlocks | Acquires lock |
+| T4 | ✅ Success | ❌ Already booked |
 
 ### ⚡ Database Optimization
 
-Added composite index on `Booking` model:
-
+Composite index for fast seat checks:
 ```python
 class Meta:
     indexes = [
@@ -222,17 +160,12 @@ class Meta:
     ]
 ```
 
-**Benefits:**
-- Lightning-fast seat availability checks
-- Optimized filtering by show and status
-- Improved query performance for large datasets
-
 ### ♻️ Soft Deletions
 
-Bookings are never permanently deleted:
-- Cancelled bookings are marked as `status='CANCELLED'`
-- Enables audit trails and analytics
-- Allows potential restoration if needed
+Bookings aren't deleted—status changes to `CANCELLED`:
+- Maintains booking history
+- Enables analytics & auditing
+- Allows refund processing
 
 ---
 
@@ -240,74 +173,44 @@ Bookings are never permanently deleted:
 
 ```
 movie_booking_backend/
-│
-├── bookings/              # Main app
-│   ├── models.py          # Database models
+├── bookings/              # Core app
+│   ├── models.py          # Movie, Show, Booking models
 │   ├── serializers.py     # DRF serializers
-│   ├── views.py           # API views
-│   ├── urls.py            # URL routing
+│   ├── views.py           # API endpoints
 │   └── tests.py           # Unit tests
-│
-├── movie_booking/         # Project settings
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
+├── movie_booking/         # Settings
 ├── manage.py
-├── requirements.txt
-└── README.md
+└── requirements.txt
 ```
 
 ---
 
-## 🔒 Security Features
+## 🚀 Production Checklist
 
-- ✅ JWT-based authentication
-- ✅ Password hashing with Django's default PBKDF2
-- ✅ CSRF protection enabled
-- ✅ SQL injection prevention via ORM
-- ✅ Rate limiting (recommended for production)
-
----
-
-## 🚀 Deployment Checklist
-
-Before deploying to production:
-
-- [ ] Set `DEBUG = False` in settings
-- [ ] Configure proper `ALLOWED_HOSTS`
-- [ ] Switch to PostgreSQL database
-- [ ] Set strong `SECRET_KEY`
-- [ ] Configure CORS headers
-- [ ] Add rate limiting (django-ratelimit)
-- [ ] Set up logging and monitoring
+- [ ] `DEBUG = False`
+- [ ] Configure `ALLOWED_HOSTS`
+- [ ] Switch to PostgreSQL
 - [ ] Use environment variables for secrets
-- [ ] Configure HTTPS/SSL
-- [ ] Set up database backups
+- [ ] Enable HTTPS/SSL
+- [ ] Set up CORS headers
+- [ ] Add rate limiting
+- [ ] Configure logging
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork the repo
+2. Create feature branch (`git checkout -b feature/NewFeature`)
+3. Commit changes (`git commit -m 'Add NewFeature'`)
+4. Push (`git push origin feature/NewFeature`)
+5. Open Pull Request
 
 ---
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 📧 Contact
-
-Have questions or suggestions? Feel free to open an issue or reach out!
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -315,6 +218,6 @@ Have questions or suggestions? Feel free to open an issue or reach out!
 
 **Made with ❤️ using Django**
 
-⭐ Star this repo if you find it helpful!
+⭐ Star if you find this helpful!
 
 </div>
